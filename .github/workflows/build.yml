@@ -1,0 +1,49 @@
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        repository: hhanh00/warp
+        submodules: true
+        path: warp
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v3
+    - name: Install appimage-builder
+      run: |
+        wget https://github.com/AppImage/appimagetool/releases/download/1.9.0/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+        sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+        sudo apt-get install desktop-file-utils
+    - name: Build AppImage
+      run: |
+        cargo install cargo-appimage
+        cargo appimage
+    - name: Upload AppImage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: zwl-recover.AppImage
+        path: target/appimage/*.AppImage
+    - name: Create Release
+      if: startsWith(github.ref_name, 'v')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: target/appimage/zwl-recover.AppImage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

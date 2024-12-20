@@ -1,11 +1,12 @@
 [package]
 name = "zwl-recover"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+description = "A recovery tool for Zecwallet Lite"
 
 [dependencies]
 anyhow = "1.0.94"
-zcash-warp = { path = "zcash-warp" }
+zcash-warp = { path  = "warp/zcash-warp" }
 tokio = { version = "1.40", features = ["rt-multi-thread"] }
 hex = "0.4.3"
 r2d2 = "0.8.10"
