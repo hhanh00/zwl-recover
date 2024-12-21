@@ -35,7 +35,7 @@ const ScanParamForm = () => {
       ntaddrs: 5,
       nzaddrs: 3,
       birth_height: 2757209,
-      lwd_url: 'http://172.16.11.111:9067',
+      lwd_url: 'https://zec.rocks',
       end_height: 0,
     }
   })
