@@ -1,0 +1,11 @@
+.label {
+  @apply block text-sm font-medium text-gray-700
+}
+
+.input-field {
+  @apply mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500
+}
+
+.overlay {
+  @apply fixed inset-0 bg-white bg-opacity-80 flex flex-col justify-center items-center z-50
+}
