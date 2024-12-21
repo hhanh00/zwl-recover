@@ -1,15 +1,50 @@
-## Recovery tool for Zecwallet Lite
+# React + TypeScript + Vite
 
-Use this if you have a wallet you can no longer access
-because the app does not start but know the seed phrase.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
-zwl-recover.AppImage --ntaddrs <NTADDRS> --nzaddrs <NZADDRS> --birth-height <BIRTH_HEIGHT> --seed <SEED> --destination <DESTINATION> --lwd-url <LWD_URL>
-```
 
-- `seed`: seed phrase (24 words)
-- `destination`: address where you want the funds sent
-- `birth-height`: height at which the wallet was created
-- `ntaddrs`: number of transparent addresses to scan
-- `nzaddrs`: number of sapling addresses to scan
-- `lwd_url`: URL of a lightwalletd server (ex: https://zec.rocks)
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```

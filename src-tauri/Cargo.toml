@@ -25,7 +25,7 @@ tauri = { version = "2.1.0", features = [] }
 tauri-plugin-log = "2.0.0-rc"
 
 anyhow = "1.0.94"
-zcash-warp = { path  = "../../warp/zcash-warp" }
+zcash-warp = { path  = "../warp/zcash-warp" }
 tokio = { version = "1.40", features = ["rt-multi-thread"] }
 hex = "0.4.3"
 r2d2 = "0.8.10"
