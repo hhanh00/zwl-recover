@@ -12,6 +12,7 @@ use zcash_warp::{
         chain::{get_sync_height, truncate_scan},
         create_schema,
     },
+    download_sapling_parameters,
     lwd::{broadcast, get_last_height},
     network::Network,
     pay::builder::init_sapling_prover_with_location,
@@ -57,6 +58,7 @@ pub async fn init(
     let do_init = tokio::task::block_in_place(|| {
         let handle = Handle::current();
         handle.block_on(async {
+            download_sapling_parameters(None)?;
             let mut zec = CoinDef::from_network(0, Network::Main);
             set_url(&mut zec, &lwd_url);
 
