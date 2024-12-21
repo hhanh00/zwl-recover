@@ -1,4 +1,4 @@
-name: Rust CI MacOS
+name: Rust CI Windows
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: windows-latest
 
     steps:
     - name: Check out code
@@ -27,20 +27,20 @@ jobs:
       uses: arduino/setup-protoc@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Tauri build --target aarch64-apple-darwin
+    - name: Tauri build
       run: |
         npm install
         npx tauri icon
-        npx tauri build
-    - name: Upload DMG artifact
+        npx tauri build --bundles nsis
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: zwl-recover.dmg
-        path: src-tauri/target/release/bundle/dmg/*.dmg
+        name: zwl-recover-setup.exe
+        path: src-tauri/target/release/bundle/nsis/*-setup.exe
     - name: Create Release
       if: startsWith(github.ref_name, 'v')
       uses: softprops/action-gh-release@v2
       with:
-        files: src-tauri/target/release/bundle/dmg/*.dmg
+        files: src-tauri/target/release/bundle/nsis/*-setup.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
