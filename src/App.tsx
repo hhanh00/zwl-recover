@@ -19,14 +19,12 @@ type Inputs = {
   nzaddrs: number;
   birth_height: number;
   lwd_url: string;
-  end_height: number;
 }
 
 const ScanParamForm = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
@@ -36,7 +34,6 @@ const ScanParamForm = () => {
       nzaddrs: 3,
       birth_height: 2757209,
       lwd_url: 'https://zec.rocks',
-      end_height: 0,
     }
   })
 
@@ -59,13 +56,11 @@ const ScanParamForm = () => {
       const clamped = Math.min(Math.max(rescale, 0.8), 1.2);
       max_blocks = Math.trunc(max_blocks * clamped);
       console.log(max_blocks);
-
-      setValue('end_height', end_height);
       setHeight(end_height);
       if (prev_end_height == end_height) break;
       prev_end_height = end_height;
     }
-    await invoke('do_sweep', data);
+    await invoke('do_sweep', {...data, end_height: prev_end_height});
     setScanning(false);
   };
 

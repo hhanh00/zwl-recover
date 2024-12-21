@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{fs::remove_file, path::Path};
 
 use anyhow::Result;
 use clap::Parser;
@@ -59,6 +59,7 @@ pub async fn init(
         let handle = Handle::current();
         handle.block_on(async {
             download_sapling_parameters(None)?;
+            let _ = remove_file("../zwl-recover.db");
             let mut zec = CoinDef::from_network(0, Network::Main);
             set_url(&mut zec, &lwd_url);
 
@@ -80,7 +81,7 @@ pub async fn init(
                     &seed,
                     addr_index,
                     birth_height,
-                    false,
+                    2,
                     true,
                 )?;
             }
@@ -92,7 +93,7 @@ pub async fn init(
                 &seed,
                 0,
                 birth_height,
-                true,
+                1,
                 true,
             )?;
 
@@ -173,8 +174,7 @@ pub async fn do_sweep(destination: String, end_height: u32, lwd_url: String) -> 
             })?;
 
             // 6. make sweep txs
-            let sweep = |table: &'static str, id_account: Option<u32>| {
-                println!("{table}");
+            let sweep = |id_account: Option<u32>| {
                 let zec = zec.clone();
                 let destination = destination.clone();
                 async move {
@@ -198,10 +198,13 @@ pub async fn do_sweep(destination: String, end_height: u32, lwd_url: String) -> 
                     for zaccount in zaccounts {
                         // 6a. create unsigned tx - show fees
                         println!("{zaccount}");
-                        let bal = connection.query_row(
-                    &format!("SELECT SUM(value) FROM {table} WHERE spent IS NULL AND account = ?1"),
-                    [zaccount],
-                    |r| r.get::<_, Option<u64>>(0),
+                        let q = match id_account {
+                            Some(_) => "SELECT SUM(value) FROM utxos WHERE spent IS NULL AND account = ?1",
+                            None => "SELECT SUM(value) FROM notes WHERE spent IS NULL AND account = ?1 AND orchard = 0"
+                        };
+                        let bal = connection.query_row(q,
+                            [zaccount],
+                            |r| r.get::<_, Option<u64>>(0),
                 )?.unwrap_or_default();
 
                         if bal != 0 {
@@ -239,8 +242,8 @@ pub async fn do_sweep(destination: String, end_height: u32, lwd_url: String) -> 
                 }
             };
 
-            sweep("utxos", Some(tid)).await?;
-            sweep("notes", None).await?;
+            sweep(Some(tid)).await?;
+            sweep(None).await?;
 
             Ok::<_, anyhow::Error>(())
         })
